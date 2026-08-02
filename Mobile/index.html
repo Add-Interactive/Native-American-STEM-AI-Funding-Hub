@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#080c14">
+  <title>Add Interactive Mobile | Native STEM & AI Funding</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- TOP MOBILE APP BAR -->
+  <header class="m-app-bar">
+    <div class="m-app-brand">
+      <span class="m-app-badge">✨ ADD INTERACTIVE STUDIO</span>
+      <span class="m-app-title">Native STEM & AI Hub</span>
+    </div>
+    <a href="../index.html?mode=desktop" class="m-desktop-switch-btn" style="text-decoration:none;">
+      💻 Desktop View
+    </a>
+  </header>
+
+  <!-- SEARCH & STATE CHIPS BAR -->
+  <div class="m-search-box">
+    <input type="text" id="mSearchInput" class="m-search-input" placeholder="🔍 Search grants, state, or keyword...">
+  </div>
+
+  <div class="m-state-scroll">
+    <button class="m-state-chip active" data-state="all">All States</button>
+    <button class="m-state-chip" data-state="State - Alaska">🏔️ Alaska</button>
+    <button class="m-state-chip" data-state="State - Hawaii">🌺 Hawaii</button>
+    <button class="m-state-chip" data-state="State - Arizona">🌵 Arizona</button>
+    <button class="m-state-chip" data-state="State - New Mexico">🌶️ New Mexico</button>
+    <button class="m-state-chip" data-state="State - California">🐻 California</button>
+    <button class="m-state-chip" data-state="State - Oklahoma">🌾 Oklahoma</button>
+    <button class="m-state-chip" data-state="State - Washington">🌲 Washington</button>
+    <button class="m-state-chip" data-state="State - Montana">🏔️ Montana</button>
+    <button class="m-state-chip" data-state="State - Minnesota">🌲 Minnesota</button>
+  </div>
+
+  <!-- VIEW 1: GRANTS FEED VIEW -->
+  <main class="m-app-view" id="view-grants">
+    <div class="m-feed-container" id="mFeedContainer">
+      <!-- Dynamic mobile grant cards rendered here -->
+    </div>
+  </main>
+
+  <!-- VIEW 2: AI HARDWARE CALCULATOR VIEW -->
+  <div class="m-app-view" id="view-calc" style="display:none; padding: 1rem;">
+    <div style="background:var(--bg-card); padding:1.25rem; border-radius:var(--radius-app); border:1px solid var(--border-color);">
+      <h3 style="color:var(--cyan-primary); font-size:1.1rem; margin-bottom:0.5rem;">🖥️ Mobile AI Server Estimator</h3>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Estimate your campus GPU server node budget in 1 tap:</p>
+      
+      <div style="display:flex; flex-direction:column; gap:0.85rem;">
+        <div>
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">GPU SERVER NODE:</label>
+          <select id="mGpuSelect" style="width:100%; min-height:44px; background:#080c14; border:1px solid var(--border-color); color:#fff; border-radius:10px; padding:0.5rem; margin-top:0.25rem;">
+            <option value="22000">Workstation Server (2x RTX 6000 Ada) - $22,000</option>
+            <option value="48000">Enterprise Node (4x NVIDIA L40S) - $48,000</option>
+            <option value="140000">Research Rack (4x NVIDIA H100) - $140,000</option>
+            <option value="12000">K-12 Student AI Lab (2x RTX 4090) - $12,000</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">STORAGE ARRAY:</label>
+          <select id="mStorageSelect" style="width:100%; min-height:44px; background:#080c14; border:1px solid var(--border-color); color:#fff; border-radius:10px; padding:0.5rem; margin-top:0.25rem;">
+            <option value="3500">16TB NVMe Gen5 RAID - $3,500</option>
+            <option value="9500">64TB Enterprise NAS - $9,500</option>
+            <option value="24000">200TB Sovereign Data SAN - $24,000</option>
+          </select>
+        </div>
+
+        <div style="background:#080c14; padding:1rem; border-radius:10px; border:1px solid var(--cyan-primary); text-align:center; margin-top:0.5rem;">
+          <div style="font-size:0.8rem; color:var(--text-muted);">TOTAL PROJECT ESTIMATE:</div>
+          <div style="font-size:1.8rem; font-weight:800; color:var(--emerald-primary);" id="mCalcTotal">$25,500</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 3: PLAYBOOK ROADMAP VIEW -->
+  <div class="m-app-view" id="view-playbook" style="display:none; padding: 1rem;">
+    <div style="background:var(--bg-card); padding:1.25rem; border-radius:var(--radius-app); border:1px solid var(--border-color);">
+      <h3 style="color:var(--cyan-primary); font-size:1.1rem; margin-bottom:0.5rem;">📋 3-Step Grant Playbook</h3>
+      
+      <div style="display:flex; flex-direction:column; gap:1rem; margin-top:1rem;">
+        <div style="background:#080c14; padding:1rem; border-radius:10px; border-left:4px solid var(--cyan-primary);">
+          <h4 style="color:var(--cyan-primary); font-size:0.95rem;">Phase 1: SAM.gov & Tribal Resolution</h4>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem;">Get active UEI & CAGE code + Tribal Council Resolution authorizing AI server deployment.</p>
+        </div>
+        <div style="background:#080c14; padding:1rem; border-radius:10px; border-left:4px solid var(--purple-primary);">
+          <h4 style="color:var(--purple-primary); font-size:0.95rem;">Phase 2: Vendor Quotes & Narrative</h4>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem;">Get itemized GSA quotes for GPUs/storage + write proposal narrative.</p>
+        </div>
+        <div style="background:#080c14; padding:1rem; border-radius:10px; border-left:4px solid var(--emerald-primary);">
+          <h4 style="color:var(--emerald-primary); font-size:0.95rem;">Phase 3: Submit via Grants.gov</h4>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem;">Submit proposal package 48 hours prior to deadline.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM FIXED NAVIGATION BAR -->
+  <nav class="m-nav-bar">
+    <a href="#" class="m-nav-item active" data-view="grants">
+      <span class="icon">🏠</span>
+      <span>Grants</span>
+    </a>
+    <a href="#" class="m-nav-item" data-view="calc">
+      <span class="icon">🖥️</span>
+      <span>AI Calc</span>
+    </a>
+    <a href="#" class="m-nav-item" data-view="playbook">
+      <span class="icon">📋</span>
+      <span>Playbook</span>
+    </a>
+  </nav>
+
+  <!-- MOBILE BOTTOM SHEET MODAL -->
+  <div class="m-sheet-backdrop" id="mSheetBackdrop">
+    <div class="m-sheet-content">
+      <div class="m-sheet-handle"></div>
+      <span class="m-badge cyan" id="mSheetBadge">Federal</span>
+      <h3 class="m-sheet-title" id="mSheetTitle">Grant Title</h3>
+      <div class="m-sheet-provider" id="mSheetProvider">Provider</div>
+      <p id="mSheetSummary" style="font-size:0.88rem; color:var(--text-muted);">Summary...</p>
+
+      <div class="m-sheet-section">
+        <h4>Qualification & Eligibility</h4>
+        <ul id="mSheetEligibility"></ul>
+      </div>
+
+      <div class="m-sheet-section">
+        <h4>Covered Equipment & Server Costs</h4>
+        <ul id="mSheetAllowed"></ul>
+      </div>
+
+      <div class="m-sheet-section">
+        <h4>Step-by-Step Procedure</h4>
+        <ol id="mSheetProcedure"></ol>
+      </div>
+
+      <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Max Funding:</div>
+          <div style="font-weight:800; color:var(--emerald-primary);" id="mSheetAmount">$500,000</div>
+        </div>
+        <a id="mSheetLink" href="#" target="_blank" class="m-tap-btn" style="text-decoration:none; padding:0.6rem 1.2rem; width:auto;">Official Site ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="data.js"></script>
+  <script src="mobile-app.js"></script>
+  <script>
+    // Calculator script for Mobile view
+    const mGpu = document.getElementById('mGpuSelect');
+    const mStor = document.getElementById('mStorageSelect');
+    const mTotal = document.getElementById('mCalcTotal');
+    if (mGpu && mStor && mTotal) {
+      function updateMCalc() {
+        const sum = parseInt(mGpu.value) + parseInt(mStor.value);
+        mTotal.textContent = '$' + sum.toLocaleString();
+      }
+      mGpu.addEventListener('change', updateMCalc);
+      mStor.addEventListener('change', updateMCalc);
+    }
+  </script>
+</body>
+</html>

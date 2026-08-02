@@ -1,10 +1,48 @@
 /**
  * Native American STEM & AI Funding Dashboard Logic
- * Optimization: Mobile Intuitive UX, Compact View, State Chips & Pagination
- * Published by Add Interactive Studio
+ * Brand: Add Interactive Studio
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // STARTUP MODE SELECTION MODAL LOGIC
+  const startupModal = document.getElementById('startupModal');
+  const btnLaunchMobile = document.getElementById('btnLaunchMobile');
+  const btnLaunchDesktop = document.getElementById('btnLaunchDesktop');
+  const rememberChoiceCheckbox = document.getElementById('rememberChoiceCheckbox');
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const modeParam = urlParams.get('mode');
+  const savedPref = localStorage.getItem('add_studio_mode_pref');
+
+  // Automatically redirect if saved preference exists or URL parameter passed
+  if (modeParam === 'mobile' || (!modeParam && savedPref === 'mobile' && window.innerWidth <= 850)) {
+    window.location.href = 'Mobile/index.html';
+    return;
+  }
+
+  // Show Startup Selection Modal if no explicit desktop param and first visit on small screen
+  if (!modeParam && !savedPref && window.innerWidth <= 850 && startupModal) {
+    startupModal.classList.add('active');
+  }
+
+  if (btnLaunchMobile) {
+    btnLaunchMobile.addEventListener('click', () => {
+      if (rememberChoiceCheckbox && rememberChoiceCheckbox.checked) {
+        localStorage.setItem('add_studio_mode_pref', 'mobile');
+      }
+      window.location.href = 'Mobile/index.html';
+    });
+  }
+
+  if (btnLaunchDesktop) {
+    btnLaunchDesktop.addEventListener('click', () => {
+      if (rememberChoiceCheckbox && rememberChoiceCheckbox.checked) {
+        localStorage.setItem('add_studio_mode_pref', 'desktop');
+      }
+      if (startupModal) startupModal.classList.remove('active');
+    });
+  }
+
   // DOM Elements
   const grantsGrid = document.getElementById('grantsGrid');
   const searchInput = document.getElementById('searchInput');
@@ -50,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const calcTotalCost = document.getElementById('calcTotalCost');
   const calcRecommendedGrants = document.getElementById('calcRecommendedGrants');
 
-  // NEW MOBILE & COMPACT UX ELEMENTS
+  // Mobile Controls
   const sidebarDrawer = document.getElementById('sidebarDrawer');
   const mobileFilterToggleBtn = document.getElementById('mobileFilterToggleBtn');
   const closeSidebarBtn = document.getElementById('closeSidebarBtn');
@@ -74,9 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentAudience = 'all';
   let currentAiOnly = false;
   
-  let viewMode = 'card'; // 'card' or 'compact'
+  let viewMode = 'card';
   let currentPage = 1;
-  const ITEMS_PER_PAGE = 8; // Prevents endless scrolling on mobile!
+  const ITEMS_PER_PAGE = 8;
 
   // Initialize Metrics
   if (typeof FUNDING_DATA !== 'undefined') {
@@ -98,23 +136,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // View Mode Switcher (Card vs Compact)
+  // View Mode Switcher
   function setViewMode(mode) {
     viewMode = mode;
     if (mode === 'compact') {
       grantsGrid.classList.remove('mode-card');
       grantsGrid.classList.add('mode-compact');
-      
-      btnModeCard.classList.remove('active');
-      btnModeCompact.classList.add('active');
+      if (btnModeCard) btnModeCard.classList.remove('active');
+      if (btnModeCompact) btnModeCompact.classList.add('active');
       if (dBtnCard) dBtnCard.classList.remove('active');
       if (dBtnCompact) dBtnCompact.classList.add('active');
     } else {
       grantsGrid.classList.remove('mode-compact');
       grantsGrid.classList.add('mode-card');
-      
-      btnModeCompact.classList.remove('active');
-      btnModeCard.classList.add('active');
+      if (btnModeCompact) btnModeCompact.classList.remove('active');
+      if (btnModeCard) btnModeCard.classList.add('active');
       if (dBtnCompact) dBtnCompact.classList.remove('active');
       if (dBtnCard) dBtnCard.classList.add('active');
     }
@@ -163,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   levelSelect.addEventListener('change', (e) => {
     currentLevel = e.target.value;
-    // Update quick chips active state if matching
     quickChips.forEach(chip => {
       chip.classList.toggle('active', chip.getAttribute('data-state') === currentLevel);
     });
@@ -216,11 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sidebarDrawer) sidebarDrawer.classList.remove('mobile-open');
   });
 
-  // Render Grant Cards or Compact Rows with Pagination
+  // Render Grant Cards or Compact Rows
   function renderGrants() {
     if (typeof FUNDING_DATA === 'undefined') return;
 
-    // Filter Database
     const filtered = FUNDING_DATA.filter(grant => {
       if (currentCategory !== 'all' && grant.category !== currentCategory) return false;
 
@@ -246,7 +280,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return true;
     });
 
-    // Update Mobile Active Filter Badge
     if (activeFilterBadge) {
       if (currentCategory !== 'all') {
         activeFilterBadge.textContent = currentCategory.toUpperCase();
@@ -257,7 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Pagination Calculation
     const totalItems = filtered.length;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
     if (currentPage > totalPages) currentPage = totalPages;
@@ -266,7 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
     const paginatedItems = filtered.slice(startIndex, endIndex);
 
-    // Update Results Counter & Pagination UI
     if (resultsCountText) {
       resultsCountText.textContent = totalItems > 0 
         ? `Showing ${startIndex + 1}–${endIndex} of ${totalItems} grants`
@@ -290,10 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Render Paginated Items
     paginatedItems.forEach(grant => {
       if (viewMode === 'compact') {
-        // COMPACT 1-LINE LIST ROW (Mobile Efficient)
         const row = document.createElement('div');
         row.className = `compact-row ${grant.colorCode} view-details-btn`;
         row.setAttribute('data-id', grant.id);
@@ -311,7 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         grantsGrid.appendChild(row);
       } else {
-        // CARD GRID ITEM
         const card = document.createElement('div');
         card.className = `grant-card ${grant.colorCode}`;
         
@@ -346,7 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Attach Event Listeners to View Details buttons
     document.querySelectorAll('.view-details-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-id');
@@ -355,7 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Open Grant Details Modal
   function openModal(grantId) {
     const grant = FUNDING_DATA.find(g => g.id === grantId);
     if (!grant) return;
@@ -385,7 +411,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Tab Switcher Logic
   tabLinks.forEach(link => {
     link.addEventListener('click', () => {
       const tabTarget = link.getAttribute('data-tab');
@@ -402,7 +427,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Theme Toggle Logic
   themeToggleBtn.addEventListener('click', () => {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     if (currentTheme === 'dark') {
@@ -416,7 +440,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Hardware Cost Estimator Calculator
   const gpuPrices = { entry: 22000, mid: 48000, high: 140000, k12: 12000 };
   const storagePrices = { nvme16: 3500, nvme64: 9500, san: 24000 };
   const networkPrices = { "10g": 2500, "100g": 8500 };
@@ -470,7 +493,6 @@ document.addEventListener('DOMContentLoaded', () => {
     elem.addEventListener('change', updateCalculator);
   });
 
-  // Initial Runs
   renderGrants();
   updateCalculator();
 });

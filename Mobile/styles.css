@@ -1,0 +1,358 @@
+/* ==========================================================================
+   NATIVE AMERICAN STEM & AI FUNDING HUB - DEDICATED MOBILE WEB APP
+   Brand: Add Interactive Studio
+   Design System: Native iOS / Android Web App (Bottom Nav, Touch Cards, Modals)
+   ========================================================================== */
+
+:root {
+  --bg-dark: #080c14;
+  --bg-card: rgba(21, 29, 48, 0.9);
+  --border-color: rgba(255, 255, 255, 0.12);
+  --cyan-primary: #06b6d4;
+  --purple-primary: #8b5cf6;
+  --emerald-primary: #10b981;
+  --amber-primary: #f59e0b;
+  --rose-primary: #f43f5e;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --radius-app: 16px;
+  --font-app: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-app);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 75px; /* Space for bottom nav bar */
+  overflow-x: hidden;
+}
+
+/* TOP MOBILE APP BAR */
+.m-app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8, 12, 20, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.85rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.m-app-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.m-app-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--cyan-primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.m-app-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #38bdf8, #a855f7, #f43f5e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.m-desktop-switch-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.4rem 0.75rem;
+  min-height: 36px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* MOBILE SEARCH & QUICK STATE CAROUSEL */
+.m-search-box {
+  padding: 0.85rem 1rem 0.4rem;
+}
+
+.m-search-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 22px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.m-state-scroll {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding: 0.5rem 1rem 0.85rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.m-state-scroll::-webkit-scrollbar { display: none; }
+
+.m-state-chip {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 0.4rem 0.8rem;
+  min-height: 34px;
+  border-radius: 17px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.m-state-chip.active {
+  background: var(--cyan-primary);
+  color: #000;
+  border-color: var(--cyan-primary);
+  font-weight: 800;
+}
+
+/* MAIN MOBILE FEED CONTAINER */
+.m-feed-container {
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.m-feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+/* MOBILE TOUCH GRANT CARD */
+.m-grant-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-app);
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.m-grant-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.m-grant-card.cyan::before { background-color: var(--cyan-primary); }
+.m-grant-card.purple::before { background-color: var(--purple-primary); }
+.m-grant-card.emerald::before { background-color: var(--emerald-primary); }
+.m-grant-card.amber::before { background-color: var(--amber-primary); }
+.m-grant-card.rose::before { background-color: var(--rose-primary); }
+
+.m-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.m-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.m-badge.cyan { background: rgba(6, 182, 212, 0.2); color: var(--cyan-primary); }
+.m-badge.purple { background: rgba(139, 92, 246, 0.2); color: var(--purple-primary); }
+.m-badge.emerald { background: rgba(16, 185, 129, 0.2); color: var(--emerald-primary); }
+.m-badge.amber { background: rgba(245, 158, 11, 0.2); color: var(--amber-primary); }
+.m-badge.rose { background: rgba(244, 63, 94, 0.2); color: var(--rose-primary); }
+
+.m-amount {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--emerald-primary);
+}
+
+.m-grant-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.m-grant-provider {
+  font-size: 0.8rem;
+  color: var(--cyan-primary);
+  font-weight: 600;
+}
+
+.m-grant-summary {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+.m-tap-btn {
+  background: var(--cyan-primary);
+  color: #000;
+  border: none;
+  width: 100%;
+  min-height: 42px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 0.4rem;
+}
+
+/* BOTTOM FIXED NAV BAR */
+.m-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 65px;
+  background: rgba(8, 12, 20, 0.96);
+  backdrop-filter: blur(15px);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 200;
+}
+
+.m-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex: 1;
+}
+
+.m-nav-item.active {
+  color: var(--cyan-primary);
+}
+
+.m-nav-item .icon {
+  font-size: 1.2rem;
+}
+
+/* MOBILE BOTTOM SHEET MODAL */
+.m-sheet-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.m-sheet-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.m-sheet-content {
+  background: var(--bg-dark);
+  border-top: 1px solid var(--border-color);
+  border-radius: 20px 20px 0 0;
+  max-height: 85vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 1.5rem 1.25rem 2.5rem;
+  position: relative;
+}
+
+.m-sheet-handle {
+  width: 40px;
+  height: 5px;
+  background: var(--text-muted);
+  border-radius: 3px;
+  margin: 0 auto 1.25rem;
+  opacity: 0.5;
+}
+
+.m-sheet-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+}
+
+.m-sheet-provider {
+  font-size: 0.85rem;
+  color: var(--cyan-primary);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.m-sheet-section {
+  margin-top: 1.25rem;
+}
+
+.m-sheet-section h4 {
+  font-size: 0.95rem;
+  color: var(--cyan-primary);
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.25rem;
+}
+
+.m-sheet-section ul, .m-sheet-section ol {
+  padding-left: 1.1rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.m-sheet-section li {
+  margin-bottom: 0.4rem;
+}

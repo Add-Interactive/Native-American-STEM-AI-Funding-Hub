@@ -12,6 +12,37 @@
 </head>
 <body>
 
+  <!-- STARTUP EXPERIENCE SELECTION POPUP MODAL -->
+  <div class="startup-modal-backdrop" id="startupModal">
+    <div class="startup-modal-card">
+      <div class="startup-brand">✨ ADD INTERACTIVE STUDIO</div>
+      <h2>Select Your Workspace Experience</h2>
+      <p>Choose the interface optimized for your current device:</p>
+
+      <div class="startup-options">
+        <div class="startup-option-card" id="btnLaunchMobile">
+          <div class="option-icon">📱</div>
+          <div class="option-title">Mobile App Mode</div>
+          <p class="option-desc">Optimized for smartphones & tablets with bottom touch navigation, swipe chips, and compact cards.</p>
+          <button class="option-btn mobile-accent">Launch Mobile App ↗</button>
+        </div>
+
+        <div class="startup-option-card" id="btnLaunchDesktop">
+          <div class="option-icon">💻</div>
+          <div class="option-title">Desktop Workspace</div>
+          <p class="option-desc">Full multi-column analytics dashboard with hardware cost estimator and detailed grant matrices.</p>
+          <button class="option-btn desktop-accent">Launch Desktop Mode ↗</button>
+        </div>
+      </div>
+
+      <div class="startup-footer">
+        <label class="remember-label">
+          <input type="checkbox" id="rememberChoiceCheckbox"> Remember my preference on this device
+        </label>
+      </div>
+    </div>
+  </div>
+
   <!-- MOBILE FLOATING FILTER BAR (Visible on Mobile Screens) -->
   <div class="mobile-filter-bar" id="mobileFilterBar">
     <button class="mobile-filter-btn" id="mobileFilterToggleBtn">
@@ -34,7 +65,10 @@
         </h1>
         <p>National, State & County Grant Availability Directory for Campus AI Servers & K-12 STEM Infrastructure</p>
       </div>
-      <div class="header-actions">
+      <div class="header-actions" style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+        <a href="Mobile/index.html" class="mode-switch-pill" style="text-decoration:none;">
+          📱 Switch to Mobile App
+        </a>
         <button class="theme-toggle-btn" id="themeToggleBtn">
           <span id="themeIcon">☀️</span> <span id="themeLabel">Light Mode</span>
         </button>
@@ -65,7 +99,7 @@
   <!-- MAIN WRAPPER -->
   <main class="main-wrapper">
 
-    <!-- SIDEBAR FILTER CONTROLS (Desktop Sticky / Mobile Drawer) -->
+    <!-- SIDEBAR FILTER CONTROLS -->
     <aside class="sidebar" id="sidebarDrawer">
       <div class="sidebar-header-mobile">
         <h3>🔍 Search & Filter Grants</h3>
@@ -176,7 +210,7 @@
           <!-- Dynamic cards or compact rows -->
         </div>
 
-        <!-- PAGINATION CONTROLS (Prevents Endless Scrolling) -->
+        <!-- PAGINATION CONTROLS -->
         <div class="pagination-bar" id="paginationControls">
           <button class="page-btn" id="prevPageBtn" disabled>&laquo; Previous</button>
           <span class="page-info" id="pageInfoText">Page 1 of 5</span>
@@ -351,7 +385,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT INCLUSIONS -->
+  <!-- SCRIPTS -->
   <script src="data.js"></script>
   <script src="app.js"></script>
 </body>
