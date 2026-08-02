@@ -1,7 +1,7 @@
 /* ==========================================================================
    NATIVE AMERICAN STEM & AI FUNDING HUB - DEDICATED MOBILE WEB APP
    Brand: Add Interactive Studio
-   Design System: Native iOS / Android Web App (Bottom Nav, Touch Cards, Modals)
+   Design System: Native iOS / Android Web App + In-Profile Search & Navigator
    ========================================================================== */
 
 :root {
@@ -33,7 +33,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-bottom: 75px; /* Space for bottom nav bar */
+  padding-bottom: 75px;
   overflow-x: hidden;
 }
 
@@ -102,6 +102,10 @@ body {
   color: var(--text-main);
   font-size: 0.9rem;
   outline: none;
+}
+
+.m-search-input:focus {
+  border-color: var(--cyan-primary);
 }
 
 .m-state-scroll {
@@ -279,7 +283,7 @@ body {
   font-size: 1.2rem;
 }
 
-/* MOBILE BOTTOM SHEET MODAL */
+/* MOBILE BOTTOM SHEET PROFILE VIEW */
 .m-sheet-backdrop {
   position: fixed;
   top: 0;
@@ -306,10 +310,10 @@ body {
   background: var(--bg-dark);
   border-top: 1px solid var(--border-color);
   border-radius: 20px 20px 0 0;
-  max-height: 85vh;
+  max-height: 90vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 1.5rem 1.25rem 2.5rem;
+  padding: 1rem 1.25rem 2.5rem;
   position: relative;
 }
 
@@ -318,8 +322,70 @@ body {
   height: 5px;
   background: var(--text-muted);
   border-radius: 3px;
-  margin: 0 auto 1.25rem;
+  margin: 0 auto 0.85rem;
   opacity: 0.5;
+}
+
+/* PERSISTENT PROFILE IN-SHEET SEARCH & NAVIGATOR HEADER */
+.profile-search-header {
+  position: sticky;
+  top: -1rem;
+  z-index: 50;
+  background: var(--bg-dark);
+  padding: 0.5rem 0 0.85rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 0.85rem;
+}
+
+.profile-search-bar {
+  width: 100%;
+}
+
+.profile-nav-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.profile-nav-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.4rem 0.8rem;
+  min-height: 38px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.profile-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.profile-nav-info {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--cyan-primary);
+}
+
+.profile-close-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .m-sheet-title {

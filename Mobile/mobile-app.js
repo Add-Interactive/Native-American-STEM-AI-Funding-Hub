@@ -1,11 +1,14 @@
 /**
  * Dedicated Native Mobile Web App Logic
  * Brand: Add Interactive Studio
+ * Features: In-Profile Search & Profile Navigator
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   const mFeedContainer = document.getElementById('mFeedContainer');
   const mSearchInput = document.getElementById('mSearchInput');
+  const mInProfileSearchInput = document.getElementById('mInProfileSearchInput');
+  
   const mStateChips = document.querySelectorAll('.m-state-chip');
   const mNavItems = document.querySelectorAll('.m-nav-item');
   const mAppViews = document.querySelectorAll('.m-app-view');
@@ -23,15 +26,48 @@ document.addEventListener('DOMContentLoaded', () => {
   const mSheetAmount = document.getElementById('mSheetAmount');
   const mSheetLink = document.getElementById('mSheetLink');
 
+  // In-Profile Navigator Controls
+  const mPrevProfileBtn = document.getElementById('mPrevProfileBtn');
+  const mNextProfileBtn = document.getElementById('mNextProfileBtn');
+  const mProfileNavInfo = document.getElementById('mProfileNavInfo');
+
   let currentSearch = '';
   let currentState = 'all';
+  
+  let currentFilteredGrants = [];
+  let currentProfileIndex = 0;
 
-  // Search Filter Listener
+  // Sync Search Inputs (Main Search & In-Profile Search)
+  function handleSearchUpdate(newSearchVal) {
+    currentSearch = newSearchVal.toLowerCase().trim();
+    if (mSearchInput && mSearchInput.value !== newSearchVal) mSearchInput.value = newSearchVal;
+    if (mInProfileSearchInput && mInProfileSearchInput.value !== newSearchVal) mInProfileSearchInput.value = newSearchVal;
+    
+    renderMobileFeed();
+
+    // If modal sheet is active, update profile view to first match
+    if (mSheetBackdrop.classList.contains('active')) {
+      if (currentFilteredGrants.length > 0) {
+        currentProfileIndex = 0;
+        loadProfileData(currentFilteredGrants[0]);
+      } else {
+        mSheetTitle.textContent = "No matching grants found";
+        mSheetProvider.textContent = "Try a different search term";
+        mSheetSummary.textContent = "";
+        mSheetEligibility.innerHTML = "";
+        mSheetAllowed.innerHTML = "";
+        mSheetProcedure.innerHTML = "";
+        mProfileNavInfo.textContent = "0 of 0";
+      }
+    }
+  }
+
   if (mSearchInput) {
-    mSearchInput.addEventListener('input', (e) => {
-      currentSearch = e.target.value.toLowerCase().trim();
-      renderMobileFeed();
-    });
+    mSearchInput.addEventListener('input', (e) => handleSearchUpdate(e.target.value));
+  }
+
+  if (mInProfileSearchInput) {
+    mInProfileSearchInput.addEventListener('input', (e) => handleSearchUpdate(e.target.value));
   }
 
   // State Chip Filter Listeners
@@ -67,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderMobileFeed() {
     if (typeof FUNDING_DATA === 'undefined') return;
 
-    const filtered = FUNDING_DATA.filter(grant => {
+    currentFilteredGrants = FUNDING_DATA.filter(grant => {
       if (currentState !== 'all' && grant.level !== currentState && grant.level !== 'National') return false;
 
       if (currentSearch) {
@@ -79,17 +115,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mFeedContainer.innerHTML = '';
 
-    if (filtered.length === 0) {
+    if (currentFilteredGrants.length === 0) {
       mFeedContainer.innerHTML = `
         <div style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">
           <div style="font-size:2.5rem; margin-bottom:0.5rem;">🔍</div>
-          <p>No grants found for this filter.</p>
+          <p>No grants found matching "${currentSearch}".</p>
         </div>
       `;
       return;
     }
 
-    filtered.forEach(grant => {
+    currentFilteredGrants.forEach((grant, index) => {
       const card = document.createElement('div');
       card.className = `m-grant-card ${grant.colorCode}`;
 
@@ -101,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="m-grant-title">${grant.title}</div>
         <div class="m-grant-provider">${grant.provider} • ${grant.level}</div>
         <div class="m-grant-summary">${grant.summary}</div>
-        <button class="m-tap-btn m-open-sheet-btn" data-id="${grant.id}">View Qualifications & Apply ↗</button>
+        <button class="m-tap-btn m-open-sheet-btn" data-index="${index}">View Qualifications & Apply ↗</button>
       `;
 
       mFeedContainer.appendChild(card);
@@ -110,15 +146,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Attach Sheet Modal Listeners
     document.querySelectorAll('.m-open-sheet-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        openSheetModal(id);
+        const index = parseInt(btn.getAttribute('data-index'));
+        openSheetModal(index);
       });
     });
   }
 
-  // Open Bottom Sheet Modal
-  function openSheetModal(grantId) {
-    const grant = FUNDING_DATA.find(g => g.id === grantId);
+  // Open Bottom Sheet Modal Profile View
+  function openSheetModal(index) {
+    if (index < 0 || index >= currentFilteredGrants.length) return;
+    currentProfileIndex = index;
+    loadProfileData(currentFilteredGrants[currentProfileIndex]);
+    mSheetBackdrop.classList.add('active');
+  }
+
+  // Load Profile Content into Modal Sheet
+  function loadProfileData(grant) {
     if (!grant) return;
 
     mSheetBadge.className = `m-badge ${grant.colorCode}`;
@@ -133,7 +176,31 @@ document.addEventListener('DOMContentLoaded', () => {
     mSheetAllowed.innerHTML = grant.allowedCosts.map(i => `<li>${i}</li>`).join('');
     mSheetProcedure.innerHTML = grant.applicationProcedure.map(s => `<li>${s}</li>`).join('');
 
-    mSheetBackdrop.classList.add('active');
+    // Update Profile Navigator Status
+    if (mProfileNavInfo) {
+      mProfileNavInfo.textContent = `${currentProfileIndex + 1} of ${currentFilteredGrants.length}`;
+    }
+    if (mPrevProfileBtn) mPrevProfileBtn.disabled = (currentProfileIndex === 0);
+    if (mNextProfileBtn) mNextProfileBtn.disabled = (currentProfileIndex === currentFilteredGrants.length - 1);
+  }
+
+  // Profile Navigator Next / Prev Listeners
+  if (mPrevProfileBtn) {
+    mPrevProfileBtn.addEventListener('click', () => {
+      if (currentProfileIndex > 0) {
+        currentProfileIndex--;
+        loadProfileData(currentFilteredGrants[currentProfileIndex]);
+      }
+    });
+  }
+
+  if (mNextProfileBtn) {
+    mNextProfileBtn.addEventListener('click', () => {
+      if (currentProfileIndex < currentFilteredGrants.length - 1) {
+        currentProfileIndex++;
+        loadProfileData(currentFilteredGrants[currentProfileIndex]);
+      }
+    });
   }
 
   if (mSheetCloseBtn) {

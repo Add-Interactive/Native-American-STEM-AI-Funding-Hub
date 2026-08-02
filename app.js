@@ -1,6 +1,7 @@
 /**
  * Native American STEM & AI Funding Dashboard Logic
  * Brand: Add Interactive Studio
+ * Feature: Persistent In-Profile Search & Profile Navigator
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,13 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const modeParam = urlParams.get('mode');
   const savedPref = localStorage.getItem('add_studio_mode_pref');
 
-  // Automatically redirect if saved preference exists or URL parameter passed
   if (modeParam === 'mobile' || (!modeParam && savedPref === 'mobile' && window.innerWidth <= 850)) {
     window.location.href = 'Mobile/index.html';
     return;
   }
 
-  // Show Startup Selection Modal if no explicit desktop param and first visit on small screen
   if (!modeParam && !savedPref && window.innerWidth <= 850 && startupModal) {
     startupModal.classList.add('active');
   }
@@ -46,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // DOM Elements
   const grantsGrid = document.getElementById('grantsGrid');
   const searchInput = document.getElementById('searchInput');
+  const inModalSearchInput = document.getElementById('inModalSearchInput');
   const levelSelect = document.getElementById('levelSelect');
   const audienceSelect = document.getElementById('audienceSelect');
   const aiServerOnlyToggle = document.getElementById('aiServerOnlyToggle');
@@ -75,6 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalProcedure = document.getElementById('modalProcedure');
   const modalMaxFunding = document.getElementById('modalMaxFunding');
   const modalOfficialLink = document.getElementById('modalOfficialLink');
+
+  // In-Modal Navigator Controls
+  const modalPrevBtn = document.getElementById('modalPrevBtn');
+  const modalNextBtn = document.getElementById('modalNextBtn');
+  const modalNavCount = document.getElementById('modalNavCount');
 
   // Calculator Elements
   const gpuSelect = document.getElementById('gpuSelect');
@@ -112,6 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentAudience = 'all';
   let currentAiOnly = false;
   
+  let currentFilteredList = [];
+  let currentModalIndex = 0;
+
   let viewMode = 'card';
   let currentPage = 1;
   const ITEMS_PER_PAGE = 8;
@@ -121,6 +129,39 @@ document.addEventListener('DOMContentLoaded', () => {
     totalGrantsCount.textContent = FUNDING_DATA.length + '+';
     const aiCount = FUNDING_DATA.filter(g => g.aiServerEligible).length;
     aiEligibleCount.textContent = aiCount;
+  }
+
+  // Synchronize Main & In-Modal Search Inputs
+  function updateGlobalSearch(val) {
+    currentSearch = val.toLowerCase().trim();
+    if (searchInput && searchInput.value !== val) searchInput.value = val;
+    if (inModalSearchInput && inModalSearchInput.value !== val) inModalSearchInput.value = val;
+
+    currentPage = 1;
+    renderGrants();
+
+    // If modal is active, load first result matching search
+    if (grantModal.classList.contains('active')) {
+      if (currentFilteredList.length > 0) {
+        currentModalIndex = 0;
+        loadModalData(currentFilteredList[0]);
+      } else {
+        modalTitle.textContent = "No matching grants found";
+        modalProvider.textContent = "Try a different search query";
+        modalSummary.textContent = "";
+        modalEligibility.innerHTML = "";
+        modalAllowedCosts.innerHTML = "";
+        modalProcedure.innerHTML = "";
+        if (modalNavCount) modalNavCount.textContent = "0 of 0";
+      }
+    }
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => updateGlobalSearch(e.target.value));
+  }
+  if (inModalSearchInput) {
+    inModalSearchInput.addEventListener('input', (e) => updateGlobalSearch(e.target.value));
   }
 
   // Mobile Drawer Toggle Event Listeners
@@ -190,13 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 300, behavior: 'smooth' });
   });
 
-  // Filter Event Listeners
-  searchInput.addEventListener('input', (e) => {
-    currentSearch = e.target.value.toLowerCase().trim();
-    currentPage = 1;
-    renderGrants();
-  });
-
   levelSelect.addEventListener('change', (e) => {
     currentLevel = e.target.value;
     quickChips.forEach(chip => {
@@ -236,7 +270,8 @@ document.addEventListener('DOMContentLoaded', () => {
     currentAiOnly = false;
     currentPage = 1;
 
-    searchInput.value = '';
+    if (searchInput) searchInput.value = '';
+    if (inModalSearchInput) inModalSearchInput.value = '';
     levelSelect.value = 'all';
     audienceSelect.value = 'all';
     aiServerOnlyToggle.checked = false;
@@ -255,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderGrants() {
     if (typeof FUNDING_DATA === 'undefined') return;
 
-    const filtered = FUNDING_DATA.filter(grant => {
+    currentFilteredList = FUNDING_DATA.filter(grant => {
       if (currentCategory !== 'all' && grant.category !== currentCategory) return false;
 
       if (currentLevel !== 'all') {
@@ -286,17 +321,17 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (currentLevel !== 'all') {
         activeFilterBadge.textContent = currentLevel.replace('State - ', '');
       } else {
-        activeFilterBadge.textContent = 'All (' + filtered.length + ')';
+        activeFilterBadge.textContent = 'All (' + currentFilteredList.length + ')';
       }
     }
 
-    const totalItems = filtered.length;
+    const totalItems = currentFilteredList.length;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
     if (currentPage > totalPages) currentPage = totalPages;
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
-    const paginatedItems = filtered.slice(startIndex, endIndex);
+    const paginatedItems = currentFilteredList.slice(startIndex, endIndex);
 
     if (resultsCountText) {
       resultsCountText.textContent = totalItems > 0 
@@ -322,10 +357,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     paginatedItems.forEach(grant => {
+      const globalIndex = currentFilteredList.findIndex(g => g.id === grant.id);
+
       if (viewMode === 'compact') {
         const row = document.createElement('div');
         row.className = `compact-row ${grant.colorCode} view-details-btn`;
-        row.setAttribute('data-id', grant.id);
+        row.setAttribute('data-index', globalIndex);
 
         row.innerHTML = `
           <div class="compact-info">
@@ -365,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="meta-item"><span class="key">Funding Ceiling:</span> <span class="val" style="color: var(--emerald-primary);">${grant.maxFunding}</span></div>
             </div>
             <div class="card-actions">
-              <button class="action-btn primary view-details-btn" data-id="${grant.id}">Application Procedures</button>
+              <button class="action-btn primary view-details-btn" data-index="${globalIndex}">Application Procedures</button>
               <a href="${grant.officialUrl}" target="_blank" class="action-btn secondary" style="text-decoration:none;">Grant Site ↗</a>
             </div>
           </div>
@@ -376,14 +413,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.view-details-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        openModal(id);
+        const index = parseInt(btn.getAttribute('data-index'));
+        openModalIndex(index);
       });
     });
   }
 
-  function openModal(grantId) {
-    const grant = FUNDING_DATA.find(g => g.id === grantId);
+  // Open Modal by Filtered Index
+  function openModalIndex(index) {
+    if (index < 0 || index >= currentFilteredList.length) return;
+    currentModalIndex = index;
+    loadModalData(currentFilteredList[currentModalIndex]);
+    grantModal.classList.add('active');
+  }
+
+  // Load Content into Modal
+  function loadModalData(grant) {
     if (!grant) return;
 
     modalBadge.className = `badge ${grant.colorCode}`;
@@ -398,7 +443,30 @@ document.addEventListener('DOMContentLoaded', () => {
     modalAllowedCosts.innerHTML = grant.allowedCosts.map(item => `<li>${item}</li>`).join('');
     modalProcedure.innerHTML = grant.applicationProcedure.map(step => `<li>${step}</li>`).join('');
 
-    grantModal.classList.add('active');
+    if (modalNavCount) {
+      modalNavCount.textContent = `${currentModalIndex + 1} of ${currentFilteredList.length}`;
+    }
+    if (modalPrevBtn) modalPrevBtn.disabled = (currentModalIndex === 0);
+    if (modalNextBtn) modalNextBtn.disabled = (currentModalIndex === currentFilteredList.length - 1);
+  }
+
+  // Modal Navigator Prev / Next
+  if (modalPrevBtn) {
+    modalPrevBtn.addEventListener('click', () => {
+      if (currentModalIndex > 0) {
+        currentModalIndex--;
+        loadModalData(currentFilteredList[currentModalIndex]);
+      }
+    });
+  }
+
+  if (modalNextBtn) {
+    modalNextBtn.addEventListener('click', () => {
+      if (currentModalIndex < currentFilteredList.length - 1) {
+        currentModalIndex++;
+        loadModalData(currentFilteredList[currentModalIndex]);
+      }
+    });
   }
 
   modalCloseBtn.addEventListener('click', () => {

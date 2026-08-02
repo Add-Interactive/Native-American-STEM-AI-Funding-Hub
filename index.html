@@ -179,7 +179,7 @@
         <a class="tab-link" data-tab="playbook">Procedure & Application Playbook</a>
       </div>
 
-      <!-- STATE QUICK-BAR (Horizontal Touch Chips for Top States) -->
+      <!-- STATE QUICK-BAR -->
       <div class="state-quick-bar" id="stateQuickBar">
         <span class="quick-lbl">Quick State Jump:</span>
         <button class="quick-chip active" data-state="all">All States</button>
@@ -345,10 +345,22 @@
     </div>
   </footer>
 
-  <!-- DETAIL MODAL DRAWER -->
+  <!-- DETAIL MODAL DRAWER (WITH PERSISTENT IN-PROFILE SEARCH & NAVIGATOR) -->
   <div class="modal-backdrop" id="grantModal">
     <div class="modal-content">
-      <button class="modal-close" id="modalCloseBtn">&times;</button>
+      <!-- PERSISTENT IN-MODAL SEARCH & NAVIGATOR HEADER -->
+      <div style="position:sticky; top:-1.5rem; z-index:100; background:var(--bg-main); padding:0.5rem 0 1rem; border-bottom:1px solid var(--border-color); margin-bottom:1.25rem; display:flex; flex-direction:column; gap:0.75rem;">
+        <input type="text" id="inModalSearchInput" class="search-input" placeholder="🔍 Search grants while viewing profile...">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <button class="action-btn secondary" id="modalPrevBtn" style="min-height:36px; padding:0.35rem 0.75rem;">⏮️ Prev</button>
+            <span id="modalNavCount" style="font-weight:800; font-size:0.85rem; color:var(--cyan-primary);">1 of 35</span>
+            <button class="action-btn secondary" id="modalNextBtn" style="min-height:36px; padding:0.35rem 0.75rem;">Next ⏭️</button>
+          </div>
+          <button class="modal-close" id="modalCloseBtn" style="position:static;">&times;</button>
+        </div>
+      </div>
+
       <div class="modal-header">
         <span class="badge" id="modalBadge">Federal</span>
         <h2 id="modalTitle" style="margin-top: 0.5rem;">Grant Title</h2>

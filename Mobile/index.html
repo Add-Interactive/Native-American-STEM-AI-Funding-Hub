@@ -20,7 +20,7 @@
     </a>
   </header>
 
-  <!-- SEARCH & STATE CHIPS BAR -->
+  <!-- PERSISTENT SEARCH & STATE CHIPS BAR -->
   <div class="m-search-box">
     <input type="text" id="mSearchInput" class="m-search-input" placeholder="🔍 Search grants, state, or keyword...">
   </div>
@@ -117,14 +117,30 @@
     </a>
   </nav>
 
-  <!-- MOBILE BOTTOM SHEET MODAL -->
+  <!-- MOBILE BOTTOM SHEET PROFILE VIEW (WITH PERSISTENT SEARCH & NAVIGATOR) -->
   <div class="m-sheet-backdrop" id="mSheetBackdrop">
     <div class="m-sheet-content">
       <div class="m-sheet-handle"></div>
-      <span class="m-badge cyan" id="mSheetBadge">Federal</span>
-      <h3 class="m-sheet-title" id="mSheetTitle">Grant Title</h3>
-      <div class="m-sheet-provider" id="mSheetProvider">Provider</div>
-      <p id="mSheetSummary" style="font-size:0.88rem; color:var(--text-muted);">Summary...</p>
+
+      <!-- IN-PROFILE PERSISTENT SEARCH & NAVIGATOR HEADER -->
+      <div class="profile-search-header">
+        <div class="profile-search-bar">
+          <input type="text" id="mInProfileSearchInput" class="m-search-input" placeholder="🔍 Search while viewing profile...">
+        </div>
+        <div class="profile-nav-controls">
+          <button class="profile-nav-btn" id="mPrevProfileBtn">⏮️ Prev</button>
+          <span class="profile-nav-info" id="mProfileNavInfo">1 of 12</span>
+          <button class="profile-nav-btn" id="mNextProfileBtn">Next ⏭️</button>
+          <button class="profile-close-btn" id="mSheetCloseBtn">&times;</button>
+        </div>
+      </div>
+
+      <div style="margin-top:0.75rem;">
+        <span class="m-badge cyan" id="mSheetBadge">Federal</span>
+        <h3 class="m-sheet-title" id="mSheetTitle" style="margin-top:0.4rem;">Grant Title</h3>
+        <div class="m-sheet-provider" id="mSheetProvider">Provider</div>
+        <p id="mSheetSummary" style="font-size:0.88rem; color:var(--text-muted);">Summary...</p>
+      </div>
 
       <div class="m-sheet-section">
         <h4>Qualification & Eligibility</h4>
@@ -155,7 +171,6 @@
   <script src="data.js"></script>
   <script src="mobile-app.js"></script>
   <script>
-    // Calculator script for Mobile view
     const mGpu = document.getElementById('mGpuSelect');
     const mStor = document.getElementById('mStorageSelect');
     const mTotal = document.getElementById('mCalcTotal');
