@@ -2,9 +2,13 @@
   "name": "native-american-stem-ai-funding-hub",
   "version": "0.0.1",
   "description": "Comprehensive National, State & County Funding Resource Hub and Mobile Dashboard for Native American STEM & Campus AI Server Infrastructure.",
-  "main": "index.html",
+  "main": "server.js",
   "scripts": {
-    "start": "launch-dashboard.bat"
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   },
   "repository": {
     "type": "git",
