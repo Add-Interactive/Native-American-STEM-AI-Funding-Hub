@@ -12,6 +12,18 @@
 </head>
 <body>
 
+  <!-- MOBILE FLOATING FILTER BAR (Visible on Mobile Screens) -->
+  <div class="mobile-filter-bar" id="mobileFilterBar">
+    <button class="mobile-filter-btn" id="mobileFilterToggleBtn">
+      <span>⚙️ Filters & Search</span>
+      <span class="filter-count-badge" id="activeFilterBadge">All</span>
+    </button>
+    <div class="mobile-view-toggle">
+      <button class="m-toggle-btn active" id="btnModeCard" title="Card View">🂠 Cards</button>
+      <button class="m-toggle-btn" id="btnModeCompact" title="Compact List View">☰ Compact</button>
+    </div>
+  </div>
+
   <!-- HEADER BANNER -->
   <header>
     <div class="header-container">
@@ -53,11 +65,16 @@
   <!-- MAIN WRAPPER -->
   <main class="main-wrapper">
 
-    <!-- SIDEBAR FILTER CONTROLS -->
-    <aside class="sidebar">
+    <!-- SIDEBAR FILTER CONTROLS (Desktop Sticky / Mobile Drawer) -->
+    <aside class="sidebar" id="sidebarDrawer">
+      <div class="sidebar-header-mobile">
+        <h3>🔍 Search & Filter Grants</h3>
+        <button class="close-sidebar-btn" id="closeSidebarBtn">&times;</button>
+      </div>
+
       <div class="filter-group">
-        <label for="searchInput">🔍 Search Grants & Keywords</label>
-        <input type="text" id="searchInput" class="search-input" placeholder="e.g. Alaska Native, Hawaii, NVIDIA, Arizona, BIE...">
+        <label for="searchInput">🔍 Quick Search</label>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search title, state, keyword...">
       </div>
 
       <div class="filter-group">
@@ -107,7 +124,7 @@
       <div class="filter-group">
         <label class="toggle-filter">
           <input type="checkbox" id="aiServerOnlyToggle">
-          <span>🖥️ Show Only AI Server / GPU Eligible Grants</span>
+          <span>🖥️ Show Only AI Server / GPU Eligible</span>
         </label>
       </div>
 
@@ -128,10 +145,42 @@
         <a class="tab-link" data-tab="playbook">Procedure & Application Playbook</a>
       </div>
 
+      <!-- STATE QUICK-BAR (Horizontal Touch Chips for Top States) -->
+      <div class="state-quick-bar" id="stateQuickBar">
+        <span class="quick-lbl">Quick State Jump:</span>
+        <button class="quick-chip active" data-state="all">All States</button>
+        <button class="quick-chip" data-state="State - Alaska">🏔️ Alaska</button>
+        <button class="quick-chip" data-state="State - Hawaii">🌺 Hawaii</button>
+        <button class="quick-chip" data-state="State - Arizona">🌵 Arizona</button>
+        <button class="quick-chip" data-state="State - New Mexico">🌶️ New Mexico</button>
+        <button class="quick-chip" data-state="State - California">🐻 California</button>
+        <button class="quick-chip" data-state="State - Oklahoma">🌾 Oklahoma</button>
+        <button class="quick-chip" data-state="State - Washington">🌲 Washington</button>
+        <button class="quick-chip" data-state="State - Montana">🏔️ Montana</button>
+        <button class="quick-chip" data-state="State - Minnesota">🌲 Minnesota</button>
+      </div>
+
       <!-- DIRECTORY TAB -->
       <div id="tab-directory" class="tab-content active">
-        <div class="cards-grid" id="grantsGrid">
-          <!-- Grant cards will be dynamically rendered here -->
+        <!-- Results Status & View Switcher -->
+        <div class="results-header">
+          <div class="results-count" id="resultsCountText">Showing 1 to 8 of 35 grants</div>
+          <div class="desktop-view-toggle">
+            <button class="v-btn active" id="dBtnCard">🂠 Card Grid</button>
+            <button class="v-btn" id="dBtnCompact">☰ Compact List</button>
+          </div>
+        </div>
+
+        <!-- GRANTS LIST / GRID CONTAINER -->
+        <div class="cards-grid mode-card" id="grantsGrid">
+          <!-- Dynamic cards or compact rows -->
+        </div>
+
+        <!-- PAGINATION CONTROLS (Prevents Endless Scrolling) -->
+        <div class="pagination-bar" id="paginationControls">
+          <button class="page-btn" id="prevPageBtn" disabled>&laquo; Previous</button>
+          <span class="page-info" id="pageInfoText">Page 1 of 5</span>
+          <button class="page-btn" id="nextPageBtn">Next &raquo;</button>
         </div>
       </div>
 

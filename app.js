@@ -1,5 +1,7 @@
 /**
  * Native American STEM & AI Funding Dashboard Logic
+ * Optimization: Mobile Intuitive UX, Compact View, State Chips & Pagination
+ * Published by Add Interactive Studio
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeIcon = document.getElementById('themeIcon');
   const themeLabel = document.getElementById('themeLabel');
   
-  // Tabs
+  // View Tabs
   const tabLinks = document.querySelectorAll('.tab-link');
   const tabContents = document.querySelectorAll('.tab-content');
   
@@ -48,38 +50,136 @@ document.addEventListener('DOMContentLoaded', () => {
   const calcTotalCost = document.getElementById('calcTotalCost');
   const calcRecommendedGrants = document.getElementById('calcRecommendedGrants');
 
+  // NEW MOBILE & COMPACT UX ELEMENTS
+  const sidebarDrawer = document.getElementById('sidebarDrawer');
+  const mobileFilterToggleBtn = document.getElementById('mobileFilterToggleBtn');
+  const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+  const activeFilterBadge = document.getElementById('activeFilterBadge');
+  
+  const btnModeCard = document.getElementById('btnModeCard');
+  const btnModeCompact = document.getElementById('btnModeCompact');
+  const dBtnCard = document.getElementById('dBtnCard');
+  const dBtnCompact = document.getElementById('dBtnCompact');
+  
+  const quickChips = document.querySelectorAll('.quick-chip');
+  const resultsCountText = document.getElementById('resultsCountText');
+  const prevPageBtn = document.getElementById('prevPageBtn');
+  const nextPageBtn = document.getElementById('nextPageBtn');
+  const pageInfoText = document.getElementById('pageInfoText');
+
   // State Variables
   let currentCategory = 'all';
   let currentSearch = '';
   let currentLevel = 'all';
   let currentAudience = 'all';
   let currentAiOnly = false;
+  
+  let viewMode = 'card'; // 'card' or 'compact'
+  let currentPage = 1;
+  const ITEMS_PER_PAGE = 8; // Prevents endless scrolling on mobile!
 
   // Initialize Metrics
   if (typeof FUNDING_DATA !== 'undefined') {
-    totalGrantsCount.textContent = FUNDING_DATA.length;
+    totalGrantsCount.textContent = FUNDING_DATA.length + '+';
     const aiCount = FUNDING_DATA.filter(g => g.aiServerEligible).length;
     aiEligibleCount.textContent = aiCount;
   }
 
+  // Mobile Drawer Toggle Event Listeners
+  if (mobileFilterToggleBtn) {
+    mobileFilterToggleBtn.addEventListener('click', () => {
+      sidebarDrawer.classList.add('mobile-open');
+    });
+  }
+
+  if (closeSidebarBtn) {
+    closeSidebarBtn.addEventListener('click', () => {
+      sidebarDrawer.classList.remove('mobile-open');
+    });
+  }
+
+  // View Mode Switcher (Card vs Compact)
+  function setViewMode(mode) {
+    viewMode = mode;
+    if (mode === 'compact') {
+      grantsGrid.classList.remove('mode-card');
+      grantsGrid.classList.add('mode-compact');
+      
+      btnModeCard.classList.remove('active');
+      btnModeCompact.classList.add('active');
+      if (dBtnCard) dBtnCard.classList.remove('active');
+      if (dBtnCompact) dBtnCompact.classList.add('active');
+    } else {
+      grantsGrid.classList.remove('mode-compact');
+      grantsGrid.classList.add('mode-card');
+      
+      btnModeCompact.classList.remove('active');
+      btnModeCard.classList.add('active');
+      if (dBtnCompact) dBtnCompact.classList.remove('active');
+      if (dBtnCard) dBtnCard.classList.add('active');
+    }
+    renderGrants();
+  }
+
+  if (btnModeCard) btnModeCard.addEventListener('click', () => setViewMode('card'));
+  if (btnModeCompact) btnModeCompact.addEventListener('click', () => setViewMode('compact'));
+  if (dBtnCard) dBtnCard.addEventListener('click', () => setViewMode('card'));
+  if (dBtnCompact) dBtnCompact.addEventListener('click', () => setViewMode('compact'));
+
+  // Quick State Bar Chips
+  quickChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      quickChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const stateVal = chip.getAttribute('data-state');
+      levelSelect.value = stateVal;
+      currentLevel = stateVal;
+      currentPage = 1;
+      renderGrants();
+    });
+  });
+
+  // Pagination Listeners
+  prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderGrants();
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+  });
+
+  nextPageBtn.addEventListener('click', () => {
+    currentPage++;
+    renderGrants();
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  });
+
   // Filter Event Listeners
   searchInput.addEventListener('input', (e) => {
     currentSearch = e.target.value.toLowerCase().trim();
+    currentPage = 1;
     renderGrants();
   });
 
   levelSelect.addEventListener('change', (e) => {
     currentLevel = e.target.value;
+    // Update quick chips active state if matching
+    quickChips.forEach(chip => {
+      chip.classList.toggle('active', chip.getAttribute('data-state') === currentLevel);
+    });
+    currentPage = 1;
     renderGrants();
   });
 
   audienceSelect.addEventListener('change', (e) => {
     currentAudience = e.target.value;
+    currentPage = 1;
     renderGrants();
   });
 
   aiServerOnlyToggle.addEventListener('change', (e) => {
     currentAiOnly = e.target.checked;
+    currentPage = 1;
     renderGrants();
   });
 
@@ -88,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pillBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentCategory = btn.getAttribute('data-category');
+      currentPage = 1;
       renderGrants();
     });
   });
@@ -98,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentLevel = 'all';
     currentAudience = 'all';
     currentAiOnly = false;
+    currentPage = 1;
 
     searchInput.value = '';
     levelSelect.value = 'all';
@@ -107,24 +209,26 @@ document.addEventListener('DOMContentLoaded', () => {
     pillBtns.forEach(b => b.classList.remove('active'));
     document.querySelector('.pill-btn.all').classList.add('active');
 
+    quickChips.forEach(c => c.classList.remove('active'));
+    document.querySelector('.quick-chip[data-state="all"]').classList.add('active');
+
     renderGrants();
+    if (sidebarDrawer) sidebarDrawer.classList.remove('mobile-open');
   });
 
-  // Render Grant Cards
+  // Render Grant Cards or Compact Rows with Pagination
   function renderGrants() {
     if (typeof FUNDING_DATA === 'undefined') return;
 
+    // Filter Database
     const filtered = FUNDING_DATA.filter(grant => {
-      // Category Match
       if (currentCategory !== 'all' && grant.category !== currentCategory) return false;
 
-      // Level / State Match
       if (currentLevel !== 'all') {
         if (currentLevel === 'county' && grant.category !== 'county') return false;
         if (currentLevel !== 'county' && grant.level !== currentLevel && grant.level !== 'National') return false;
       }
 
-      // Audience Match
       if (currentAudience !== 'all') {
         const audLower = grant.targetAudience.toLowerCase();
         if (currentAudience === 'K-12' && !audLower.includes('k-12') && !audLower.includes('school')) return false;
@@ -132,10 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentAudience === 'NASNTIs' && !audLower.includes('nasnti') && !audLower.includes('higher ed')) return false;
       }
 
-      // AI Server Toggle Match
       if (currentAiOnly && !grant.aiServerEligible) return false;
 
-      // Search Query Match
       if (currentSearch) {
         const fullText = (grant.title + ' ' + grant.provider + ' ' + grant.summary + ' ' + grant.level + ' ' + grant.targetAudience + ' ' + grant.allowedCosts.join(' ')).toLowerCase();
         if (!fullText.includes(currentSearch)) return false;
@@ -144,53 +246,104 @@ document.addEventListener('DOMContentLoaded', () => {
       return true;
     });
 
+    // Update Mobile Active Filter Badge
+    if (activeFilterBadge) {
+      if (currentCategory !== 'all') {
+        activeFilterBadge.textContent = currentCategory.toUpperCase();
+      } else if (currentLevel !== 'all') {
+        activeFilterBadge.textContent = currentLevel.replace('State - ', '');
+      } else {
+        activeFilterBadge.textContent = 'All (' + filtered.length + ')';
+      }
+    }
+
+    // Pagination Calculation
+    const totalItems = filtered.length;
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
+    const paginatedItems = filtered.slice(startIndex, endIndex);
+
+    // Update Results Counter & Pagination UI
+    if (resultsCountText) {
+      resultsCountText.textContent = totalItems > 0 
+        ? `Showing ${startIndex + 1}–${endIndex} of ${totalItems} grants`
+        : '0 grants found';
+    }
+
+    pageInfoText.textContent = `Page ${currentPage} of ${totalPages}`;
+    prevPageBtn.disabled = (currentPage === 1);
+    nextPageBtn.disabled = (currentPage === totalPages || totalPages === 0);
+
     grantsGrid.innerHTML = '';
 
-    if (filtered.length === 0) {
+    if (totalItems === 0) {
       grantsGrid.innerHTML = `
         <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-secondary);">
           <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
           <h3>No matching funding opportunities found</h3>
-          <p style="margin-top: 0.5rem;">Try adjusting your search terms or resetting the filter options.</p>
+          <p style="margin-top: 0.5rem;">Try resetting your search query or state filter.</p>
         </div>
       `;
       return;
     }
 
-    filtered.forEach(grant => {
-      const card = document.createElement('div');
-      card.className = `grant-card ${grant.colorCode}`;
-      
-      const aiTagHtml = grant.aiServerEligible 
-        ? `<span class="ai-badge">🖥️ AI Server Eligible</span>` 
-        : '';
+    // Render Paginated Items
+    paginatedItems.forEach(grant => {
+      if (viewMode === 'compact') {
+        // COMPACT 1-LINE LIST ROW (Mobile Efficient)
+        const row = document.createElement('div');
+        row.className = `compact-row ${grant.colorCode} view-details-btn`;
+        row.setAttribute('data-id', grant.id);
 
-      card.innerHTML = `
-        <div>
-          <div class="card-top">
-            <span class="badge ${grant.colorCode}">${grant.category}</span>
-            ${aiTagHtml}
+        row.innerHTML = `
+          <div class="compact-info">
+            <div class="compact-title">${grant.title}</div>
+            <div class="compact-sub">
+              <span>📍 ${grant.level}</span> • 
+              <span>🎓 ${grant.targetAudience}</span>
+              ${grant.aiServerEligible ? '• <span style="color:#d8b4fe; font-weight:700;">🖥️ AI GPU</span>' : ''}
+            </div>
           </div>
-          <h3 class="grant-title">${grant.title}</h3>
-          <div class="grant-provider">${grant.provider}</div>
-          <p class="grant-summary">${grant.summary}</p>
-        </div>
+          <div class="compact-amount">${grant.maxFunding}</div>
+        `;
+        grantsGrid.appendChild(row);
+      } else {
+        // CARD GRID ITEM
+        const card = document.createElement('div');
+        card.className = `grant-card ${grant.colorCode}`;
+        
+        const aiTagHtml = grant.aiServerEligible 
+          ? `<span class="ai-badge">🖥️ AI Server Eligible</span>` 
+          : '';
 
-        <div>
-          <div class="card-meta">
-            <div class="meta-item"><span class="key">Scope:</span> <span class="val">${grant.level}</span></div>
-            <div class="meta-item"><span class="key">Audience:</span> <span class="val">${grant.targetAudience}</span></div>
-            <div class="meta-item"><span class="key">Funding Ceiling:</span> <span class="val" style="color: var(--emerald-primary);">${grant.maxFunding}</span></div>
-            <div class="meta-item"><span class="key">Matching Req:</span> <span class="val">${grant.matchingReq}</span></div>
+        card.innerHTML = `
+          <div>
+            <div class="card-top">
+              <span class="badge ${grant.colorCode}">${grant.category}</span>
+              ${aiTagHtml}
+            </div>
+            <h3 class="grant-title">${grant.title}</h3>
+            <div class="grant-provider">${grant.provider}</div>
+            <p class="grant-summary">${grant.summary}</p>
           </div>
-          <div class="card-actions">
-            <button class="action-btn primary view-details-btn" data-id="${grant.id}">Application Procedures</button>
-            <a href="${grant.officialUrl}" target="_blank" class="action-btn secondary" style="text-decoration:none;">Grant Site ↗</a>
-          </div>
-        </div>
-      `;
 
-      grantsGrid.appendChild(card);
+          <div>
+            <div class="card-meta">
+              <div class="meta-item"><span class="key">Scope:</span> <span class="val">${grant.level}</span></div>
+              <div class="meta-item"><span class="key">Audience:</span> <span class="val">${grant.targetAudience}</span></div>
+              <div class="meta-item"><span class="key">Funding Ceiling:</span> <span class="val" style="color: var(--emerald-primary);">${grant.maxFunding}</span></div>
+            </div>
+            <div class="card-actions">
+              <button class="action-btn primary view-details-btn" data-id="${grant.id}">Application Procedures</button>
+              <a href="${grant.officialUrl}" target="_blank" class="action-btn secondary" style="text-decoration:none;">Grant Site ↗</a>
+            </div>
+          </div>
+        `;
+        grantsGrid.appendChild(card);
+      }
     });
 
     // Attach Event Listeners to View Details buttons
@@ -215,13 +368,8 @@ document.addEventListener('DOMContentLoaded', () => {
     modalMaxFunding.textContent = grant.maxFunding;
     modalOfficialLink.href = grant.officialUrl;
 
-    // Eligibility list
     modalEligibility.innerHTML = grant.eligibility.map(item => `<li>${item}</li>`).join('');
-
-    // Allowed costs list
     modalAllowedCosts.innerHTML = grant.allowedCosts.map(item => `<li>${item}</li>`).join('');
-
-    // Procedure steps list
     modalProcedure.innerHTML = grant.applicationProcedure.map(step => `<li>${step}</li>`).join('');
 
     grantModal.classList.add('active');
@@ -287,7 +435,6 @@ document.addEventListener('DOMContentLoaded', () => {
     calcPowerCost.textContent = '$' + pVal.toLocaleString();
     calcTotalCost.textContent = '$' + total.toLocaleString();
 
-    // Match recommended grants based on total budget
     let matches = [];
     if (total <= 50000) {
       matches = [
