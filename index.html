@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#0b0f19">
+  <title>Add Interactive Studio | Native American STEM & AI Server Funding Hub</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- HEADER BANNER -->
+  <header>
+    <div class="header-container">
+      <div class="header-title-group">
+        <div class="brand-badge"><span>✨</span> ADD INTERACTIVE STUDIO</div>
+        <h1>
+          <span>⚡</span> Native American STEM & AI Funding Hub
+        </h1>
+        <p>National, State & County Grant Availability Directory for Campus AI Servers & K-12 STEM Infrastructure</p>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle-btn" id="themeToggleBtn">
+          <span id="themeIcon">☀️</span> <span id="themeLabel">Light Mode</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- QUICK METRICS BAR -->
+    <div class="metrics-grid">
+      <div class="metric-card cyan">
+        <div class="lbl">Total Grant Opportunities</div>
+        <div class="val" id="totalGrantsCount">40+</div>
+      </div>
+      <div class="metric-card purple">
+        <div class="lbl">AI Server & GPU Hardware Eligible</div>
+        <div class="val" id="aiEligibleCount">30</div>
+      </div>
+      <div class="metric-card emerald">
+        <div class="lbl">Federal Funding Pool</div>
+        <div class="val">$500M+</div>
+      </div>
+      <div class="metric-card amber">
+        <div class="lbl">States & Counties Covered</div>
+        <div class="val">All 50 States + AK & HI</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="main-wrapper">
+
+    <!-- SIDEBAR FILTER CONTROLS -->
+    <aside class="sidebar">
+      <div class="filter-group">
+        <label for="searchInput">🔍 Search Grants & Keywords</label>
+        <input type="text" id="searchInput" class="search-input" placeholder="e.g. Alaska Native, Hawaii, NVIDIA, Arizona, BIE...">
+      </div>
+
+      <div class="filter-group">
+        <label>🏷️ Funding Source Category</label>
+        <div class="pill-container">
+          <button class="pill-btn active all" data-category="all">All</button>
+          <button class="pill-btn federal" data-category="federal">Federal</button>
+          <button class="pill-btn corporate" data-category="corporate">Tech Corporate</button>
+          <button class="pill-btn philanthropic" data-category="philanthropic">Philanthropic</button>
+          <button class="pill-btn state" data-category="state">State Level</button>
+          <button class="pill-btn county" data-category="county">County / Local</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label for="levelSelect">📍 State & Regional Filter</label>
+        <select id="levelSelect" class="select-input">
+          <option value="all">All Regions (National + States)</option>
+          <option value="National">National Programs Only</option>
+          <option value="State - Alaska">Alaska (ANE & Denali)</option>
+          <option value="State - Hawaii">Hawaii (NHEP & OHA)</option>
+          <option value="State - Arizona">Arizona</option>
+          <option value="State - New Mexico">New Mexico</option>
+          <option value="State - California">California</option>
+          <option value="State - Oklahoma">Oklahoma</option>
+          <option value="State - Washington">Washington</option>
+          <option value="State - Montana">Montana</option>
+          <option value="State - Minnesota">Minnesota</option>
+          <option value="State - North Dakota & South Dakota">Dakotas (ND & SD)</option>
+          <option value="State - Wisconsin & Michigan">WI & MI (Great Lakes)</option>
+          <option value="State - North Carolina & East Coast">NC & East Coast</option>
+          <option value="county">County & Local Grants</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="audienceSelect">🎓 Institution Type</label>
+        <select id="audienceSelect" class="select-input">
+          <option value="all">All Institution Types</option>
+          <option value="K-12">K-12 Tribal & BIE Schools</option>
+          <option value="TCUs">Tribal Colleges & Universities (TCUs)</option>
+          <option value="NASNTIs">NASNTIs (Native-Serving Higher Ed)</option>
+          <option value="Community">Tribal Community & Non-Profit</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="toggle-filter">
+          <input type="checkbox" id="aiServerOnlyToggle">
+          <span>🖥️ Show Only AI Server / GPU Eligible Grants</span>
+        </label>
+      </div>
+
+      <button class="reset-btn" id="resetFiltersBtn">🔄 Reset All Filters</button>
+
+      <div class="sidebar-brand-box">
+        <div class="s-brand-title">Add Interactive Studio</div>
+        <p>Empowering Native Nations & Colleges with Sovereign AI Compute Infrastructure.</p>
+      </div>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <section class="content-area">
+      <!-- VIEW NAVIGATION TABS -->
+      <div class="view-tabs">
+        <a class="tab-link active" data-tab="directory">Directory & Cards</a>
+        <a class="tab-link" data-tab="calculator">AI Server Hardware Calculator</a>
+        <a class="tab-link" data-tab="playbook">Procedure & Application Playbook</a>
+      </div>
+
+      <!-- DIRECTORY TAB -->
+      <div id="tab-directory" class="tab-content active">
+        <div class="cards-grid" id="grantsGrid">
+          <!-- Grant cards will be dynamically rendered here -->
+        </div>
+      </div>
+
+      <!-- HARDWARE CALCULATOR TAB -->
+      <div id="tab-calculator" class="tab-content" style="display: none;">
+        <div class="calculator-panel">
+          <h2>🖥️ On-Campus AI Server Node Cost Estimator</h2>
+          <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Plan your hardware budget for deploying sovereign Native American campus AI compute nodes. Select your configuration below to match with eligible grant funding tiers.
+          </p>
+
+          <div class="calc-grid">
+            <div>
+              <div class="filter-group">
+                <label for="gpuSelect">Select GPU Server Node Type:</label>
+                <select id="gpuSelect" class="select-input">
+                  <option value="entry">Workstation AI Server (2x NVIDIA RTX 6000 Ada - 96GB VRAM) (~$22,000)</option>
+                  <option value="mid">Enterprise Campus Node (4x NVIDIA L40S 48GB - 192GB VRAM) (~$48,000)</option>
+                  <option value="high">High-Performance Research Rack (4x NVIDIA H100 80GB SXM) (~$140,000)</option>
+                  <option value="k12">K-12 Student AI Lab Server (2x NVIDIA RTX 4090) (~$12,000)</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="storageSelect">Storage Infrastructure:</label>
+                <select id="storageSelect" class="select-input">
+                  <option value="nvme16">16TB High-Speed NVMe Gen5 RAID Array (~$3,500)</option>
+                  <option value="nvme64">64TB Enterprise NVMe NAS Storage (~$9,500)</option>
+                  <option value="san">200TB Tribal Sovereign Data SAN Storage (~$24,000)</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="networkSelect">Campus Network Interconnect:</label>
+                <select id="networkSelect" class="select-input">
+                  <option value="10g">10GbE Dual-Port Switch & Cabling (~$2,500)</option>
+                  <option value="100g">100GbE High-Speed InfiniBand Switch (~$8,500)</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="powerSelect">Power & Server Room Rack Enclosure:</label>
+                <select id="powerSelect" class="select-input">
+                  <option value="basic">42U Enclosure + 3kVA Online UPS (~$4,000)</option>
+                  <option value="adv">Soundproof Smart Rack + 10kVA Redundant UPS + Dedicated HVAC (~$14,000)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="background: var(--bg-main); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <h3 style="color: var(--cyan-primary); font-size: 1.2rem; margin-bottom: 1rem;">Budget Breakdown Summary</h3>
+                <div class="card-meta">
+                  <div class="meta-item"><span class="key">Selected GPU Server:</span> <span class="val" id="calcGpuCost">$22,000</span></div>
+                  <div class="meta-item"><span class="key">Storage Array:</span> <span class="val" id="calcStorageCost">$3,500</span></div>
+                  <div class="meta-item"><span class="key">Network Interconnect:</span> <span class="val" id="calcNetworkCost">$2,500</span></div>
+                  <div class="meta-item"><span class="key">Rack & UPS Power:</span> <span class="val" id="calcPowerCost">$4,000</span></div>
+                </div>
+                <hr style="border-color: var(--border-color); margin: 1rem 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 1.1rem; font-weight: 700;">Total Estimated Project Cost:</span>
+                  <span style="font-size: 1.6rem; font-weight: 800; color: var(--emerald-primary);" id="calcTotalCost">$32,000</span>
+                </div>
+              </div>
+
+              <div style="margin-top: 1.5rem;">
+                <h4 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Top Recommended Funding Matches:</h4>
+                <div id="calcRecommendedGrants" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                  <!-- Dynamic recommended grants -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYBOOK TAB -->
+      <div id="tab-playbook" class="tab-content" style="display: none;">
+        <div class="calculator-panel">
+          <h2>📋 Operational Playbook: Grant Acquisition Roadmap</h2>
+          <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Step-by-step master checklist for acquiring federal, corporate, and state grants for Native American campus AI infrastructure.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="background: var(--bg-main); padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--cyan-primary);">
+              <h3 style="color: var(--cyan-primary);">Phase 1: Institutional & Tribal Readiness (Weeks 1 - 3)</h3>
+              <ul style="margin-top: 0.75rem; padding-left: 1.25rem; color: var(--text-secondary);">
+                <li><strong>SAM.gov Registration:</strong> Register institution or Tribe in SAM.gov to secure active Unique Entity Identifier (UEI) and CAGE code.</li>
+                <li><strong>Tribal Resolution / Leadership Approval:</strong> Obtain formal Tribal Council Resolution or Board Authorization approving grant submission.</li>
+                <li><strong>Data Sovereignty Agreement:</strong> Draft institutional governance policy ensuring sovereign ownership of locally hosted AI models and datasets.</li>
+              </ul>
+            </div>
+
+            <div style="background: var(--bg-main); padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--purple-primary);">
+              <h3 style="color: var(--purple-primary);">Phase 2: Technical Design & Vendor Quotes (Weeks 4 - 6)</h3>
+              <ul style="margin-top: 0.75rem; padding-left: 1.25rem; color: var(--text-secondary);">
+                <li><strong>Hardware Specs & Quotes:</strong> Solicit itemized vendor quotes for GPU servers, NVMe storage arrays, high-speed switches, and UPS backup.</li>
+                <li><strong>Facility Site Audit:</strong> Verify campus electrical capacity (208V/240V Dedicated Circuit), HVAC cooling capacity, and physical security.</li>
+                <li><strong>Project Narrative:</strong> Write proposal connecting AI server infrastructure directly to Native student retention, STEM research, and workforce development.</li>
+              </ul>
+            </div>
+
+            <div style="background: var(--bg-main); padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--emerald-primary);">
+              <h3 style="color: var(--emerald-primary);">Phase 3: Formal Application Submission (Weeks 7 - 8)</h3>
+              <ul style="margin-top: 0.75rem; padding-left: 1.25rem; color: var(--text-secondary);">
+                <li><strong>Federal Portal Submission:</strong> Submit proposal via Grants.gov or Research.gov (for NSF TCUP) before 5:00 PM EST deadline.</li>
+                <li><strong>Corporate & Private Portals:</strong> Apply to NVIDIA Hardware Grant Portal, Microsoft TSI, or Sloan Foundation LOI portal.</li>
+                <li><strong>Post-Submission Follow-Up:</strong> Contact assigned Federal Program Officer or Corporate Liaison for confirmation of receipt.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="f-brand">ADD INTERACTIVE STUDIO</span>
+        <span>• Native American STEM & Sovereign AI Compute Platform</span>
+      </div>
+      <div class="footer-copy">
+        © 2026 Add Interactive Studio. Built for Tribal Nations, TCUs, NASNTIs, and K-12 BIE Schools.
+      </div>
+    </div>
+  </footer>
+
+  <!-- DETAIL MODAL DRAWER -->
+  <div class="modal-backdrop" id="grantModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalCloseBtn">&times;</button>
+      <div class="modal-header">
+        <span class="badge" id="modalBadge">Federal</span>
+        <h2 id="modalTitle" style="margin-top: 0.5rem;">Grant Title</h2>
+        <div id="modalProvider" style="color: var(--cyan-primary); font-weight: 600;">Provider</div>
+      </div>
+
+      <div class="modal-section">
+        <h3>Program Summary</h3>
+        <p id="modalSummary" style="color: var(--text-secondary);">Summary description...</p>
+      </div>
+
+      <div class="modal-section">
+        <h3>Qualification & Eligibility Criteria</h3>
+        <ul id="modalEligibility"></ul>
+      </div>
+
+      <div class="modal-section">
+        <h3>Allowed Costs & Covered Infrastructure</h3>
+        <ul id="modalAllowedCosts"></ul>
+      </div>
+
+      <div class="modal-section">
+        <h3>Step-by-Step Procedure to Acquire Grant</h3>
+        <ol id="modalProcedure"></ol>
+      </div>
+
+      <div class="modal-section" style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+        <div>
+          <span style="color: var(--text-muted); font-size: 0.85rem;">Max Award Ceiling:</span>
+          <div style="font-weight: 800; font-size: 1.2rem; color: var(--emerald-primary);" id="modalMaxFunding">Amount</div>
+        </div>
+        <a id="modalOfficialLink" href="#" target="_blank" class="action-btn primary" style="text-decoration: none; padding: 0.75rem 1.5rem;">Official Grant Portal ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT INCLUSIONS -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

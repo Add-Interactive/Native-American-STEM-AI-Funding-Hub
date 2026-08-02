@@ -1,0 +1,19 @@
+{
+  "name": "native-american-stem-ai-funding-hub",
+  "version": "0.0.1",
+  "description": "Comprehensive National, State & County Funding Resource Hub and Mobile Dashboard for Native American STEM & Campus AI Server Infrastructure.",
+  "main": "index.html",
+  "scripts": {
+    "start": "launch-dashboard.bat"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Add-Interactive/Native-American-STEM-AI-Funding-Hub.git"
+  },
+  "author": "Add Interactive Studio",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Add-Interactive/Native-American-STEM-AI-Funding-Hub/issues"
+  },
+  "homepage": "https://github.com/Add-Interactive/Native-American-STEM-AI-Funding-Hub#readme"
+}
